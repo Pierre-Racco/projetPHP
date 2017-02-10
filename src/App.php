@@ -4,9 +4,12 @@ use Exception\ExceptionHandler;
 use Exception\HttpException;
 use Routing\Route;
 use View\TemplateEngineInterface;
+use Http\Request;
 
 class App
 {
+    use EventDispatcherTrait;
+
     /**
      * @var array
      */
@@ -50,10 +53,10 @@ class App
         return $this->templateEngine->render($template, $parameters);
     }
 
-    public function run(\Http\Request $request = null)
+    public function run(Request $request = null)
     {
         if ($request == null) {
-            $request = \Http\Request::createFromGlobals();
+            $request = Request::createFromGlobals();
         }
 
         $method = $request->getMethod();
@@ -71,8 +74,10 @@ class App
     /**
      * @param Route $route
      */
-    private function process(Route $route, \Http\Request $request, \Http\Response $response = null)
+    private function process(Route $route, Request $request, Response $response = null)
     {
+        $this->dispatch('process.before', [$request]);
+     
         try {
 
             $arguments = $route->getArguments();
@@ -125,7 +130,7 @@ class App
      */
     public function get($pattern, $callable)
     {
-        $this->registerRoute(\Http\Request::GET, $pattern, $callable);
+        $this->registerRoute(Request::GET, $pattern, $callable);
 
         return $this;
     }
@@ -138,7 +143,7 @@ class App
      */
     public function put($pattern, $callable)
     {
-        $this->registerRoute(\Http\Request::PUT, $pattern, $callable);
+        $this->registerRoute(Request::PUT, $pattern, $callable);
 
         return $this;
     }
@@ -151,7 +156,7 @@ class App
      */
     public function post($pattern, $callable)
     {
-        $this->registerRoute(\Http\Request::POST, $pattern, $callable);
+        $this->registerRoute(Request::POST, $pattern, $callable);
 
         return $this;
     }
@@ -164,7 +169,7 @@ class App
      */
     public function delete($pattern, $callable)
     {
-        $this->registerRoute(\Http\Request::DELETE, $pattern, $callable);
+        $this->registerRoute(Request::DELETE, $pattern, $callable);
 
         return $this;
     }
