@@ -4,6 +4,7 @@ namespace Dal;
 
 class StatusFinder implements FinderInterface
 {
+    private $con;
 
     public function __construct(\Dal\Connection $con)
     {
@@ -11,11 +12,13 @@ class StatusFinder implements FinderInterface
     }
 
     /**
-     * @return string
+     * Renvoie un status grâce à son id 
+     * @param id identifiant du status
+     * @param criteria
+     * @return status
      */
     public function findOneById($id, $criteria = null)
     {
-
         $stmt = $this->con->prepare('SELECT * FROM statuses WHERE id = :id');
         $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
         $stmt->execute();
@@ -24,7 +27,8 @@ class StatusFinder implements FinderInterface
     }
 
     /**
-     * @return string
+     * Retourne tous les status
+     * @return statuses
      */
     public function findAll()
     {

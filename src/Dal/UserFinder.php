@@ -4,6 +4,7 @@ namespace Dal;
 
 class UserFinder implements FinderInterface
 {
+    private $con;
 
     public function __construct(\Dal\Connection $con)
     {
@@ -11,7 +12,10 @@ class UserFinder implements FinderInterface
     }
 
     /**
-     * @return string
+     * Renvoie un user grâce à son id 
+     * @param id identifiant du user
+     * @param criteria
+     * @return user
      */
     public function findOneById($id, $criteria = null)
     {
@@ -23,11 +27,13 @@ class UserFinder implements FinderInterface
     }
 
     /**
-     * @return string
+     * Renvoie un user grâce à son username 
+     * @param username nom du user
+     * @param criteria
+     * @return user
      */
-    public function findAll()
+    public function findOneByUsername($username)
     {
-
         $stmt = $this->con->prepare('SELECT * FROM users');
         $stmt->execute();
         
@@ -39,11 +45,11 @@ class UserFinder implements FinderInterface
     }
 
     /**
-     * @return string
+     * Retourne tous les users
+     * @return users
      */
-    public function findOneByUsername($username)
+    public function findAll()
     {
-
         $stmt = $this->con->prepare('SELECT * FROM users WHERE username = :username');
         $stmt->execute(["username" => $username]);
         $user = $stmt->fetchAll(\PDO::FETCH_ASSOC);

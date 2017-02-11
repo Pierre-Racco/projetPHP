@@ -25,9 +25,8 @@ class Status implements \JsonSerializable
     private $date;
 
     /**
-     * @param string   $method
-     * @param string   $pattern
-     * @param callable $callable
+     * @param string   $message
+     * @param string   $name
      */
     public function __construct($id, $message, $name, $date)
     {
@@ -69,6 +68,10 @@ class Status implements \JsonSerializable
         return $this->name;
     }
 
+    /**
+     * Utile pour la sérialization d'un status
+     * @return Array représentant un status
+     */
     public function jsonSerialize()
     {
         return [

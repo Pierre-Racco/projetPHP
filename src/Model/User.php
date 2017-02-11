@@ -20,15 +20,14 @@ class User
     private $password;
 
     /**
-     * @param string   $method
-     * @param string   $pattern
-     * @param callable $callable
+     * @param string   $login
+     * @param string   $password
      */
     public function __construct($username, $password)
     {
-        $this->id    = uniqid();
-        $this->username   = $username;
-        $this->password  = $password;
+        $this->id = uniqid();
+        $this->login = $login;
+        $this->password = $password;
     }
 
     /**

@@ -77,6 +77,5 @@ class Request
         $mediaType = $negotiator->getBest($acceptHeader, $priorities);
 
         return $mediaType->getValue();
-        // $value == 'text/html; charset=UTF-8'
     }
 }
