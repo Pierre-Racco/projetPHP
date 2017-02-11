@@ -43,9 +43,8 @@ class UserFinder implements FinderInterface
     {
 
         $stmt = $this->con->prepare('SELECT * FROM users WHERE username = :username');
-        $stmt->bindParam(':username', $username,  \PDO::PARAM_STR);
-        $stmt->execute();
-        $stmt->fetchAll(\PDO::FETCH_CLASS, 'Model\User');
+        $stmt->execute(["username" => $username]);
+        $stmt->fetchObject('Model\User');
         return $stmt;
     }
 }

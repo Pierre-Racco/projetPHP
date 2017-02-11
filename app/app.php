@@ -35,7 +35,7 @@ $app->get('/statuses', function (Request $request) use ($app, $con) {
 	
 	if($request->guessBestFormat() == "text/html; charset=UTF-8"){
 		// Format html ?
-		
+		var_dump($statusFinder->findAll());
 		return $app->render('statuses.php', $statusFinder->findAll());
 	} else if($request->guessBestFormat() == "application/json"){
 		// Format Json ?
@@ -75,9 +75,10 @@ $app->post('/statuses', function (Request $request) use ($app, $con) {
 	$message = $request->getParameter('message');
 	
 	$status = new Model\Status($message, $username);
-	var_dump($status);
+	var_dump($statusMapper->persist($status));
 	$statusMapper->persist($status);
 	
+	$app->redirect('/statuses', 204);
 
 });
 

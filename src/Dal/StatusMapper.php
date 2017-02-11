@@ -12,26 +12,33 @@ private $con;
 
     public function persist(\Model\Status $status)
     {
-        $finder = new StatusFinder($this->con);
-        $id = $status->getId();
+        $statusFinder = new StatusFinder($this->con);
+        $userFinder = new UserFinder($this->con);
+        $user = $userFinder->findOneByUsername($status->getName());
+        var_dump($user);
+        $fk_user_id = $user->getId();
 
-        if(!$finder->findOneById($id)){
-            $stmt = $this->con->prepare('INSERT INTO statuses (id, message, name, date) VALUES (:id, :message, :name, :date)');
+        if(!$statusFinder->findOneById($id)){
+            $query = 'INSERT INTO statuses (id, message, name, date) VALUES (:id, :message, :name, :date)';
         } else {
-            $stmt = $this->con->prepare('UPDATE FROM statuses (id, message, name, date) VALUES (:id, :message, :name, :date) WHERE id = :id');
+            $query = 'UPDATE FROM statuses (id, message, name, date) VALUES (:id, :message, :name, :date) WHERE id = :id';
         }
-            $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
-            $stmt->bindParam(':message', $status->getMessage(), \PDO::PARAM_STR);  
-            $stmt->bindParam(':name', $status->getName(), \PDO::PARAM_STR);  
-            $stmt->bindParam(':date', $status->getDate(), \PDO::PARAM_STR);
-            return $stmt->execute();
+        $parameters = array(
+            'id' => $status->getId(),
+            'message' => $status->getMessage(),
+            'name' => $status->getName(),
+            'date' => $status->getDate(),
+            'fk_user_id' => $fk_user_id
+        );
+        return $this->con->executeQuery($query, $parameters); 
     }
-
     public function remove(\Model\Status $status)
     {
+        $statusFinder = new StatusFinder($this->con);
+
         $id = $status->getId();
 
-        if($finder->findOneById($id)){
+        if($statusFinder->findOneById($id)){
             $stmt = $this->con->prepare('DELETE FROM statuses WHERE id = :id');
             $stmt->bindParam(':id', $id, \PDO::PARAM_INT);  
             return $stmt->execute();

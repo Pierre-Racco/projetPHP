@@ -2,7 +2,7 @@
 
 namespace Model;
 
-class Status
+class User
 {
     /**
      * @var int
