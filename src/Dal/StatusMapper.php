@@ -15,10 +15,13 @@ private $con;
         $statusFinder = new StatusFinder($this->con);
         $userFinder = new UserFinder($this->con);
         $user = $userFinder->findOneByUsername($status->getName());
-        var_dump($user);
-        $fk_user_id = $user->getId();
+        if($user){
+            $fk_user_id = $user->getId();
+        }
+        $id = $status->getId();
+        
 
-        if(!$statusFinder->findOneById($id)){
+        if($statusFinder->findOneById($id)){
             $query = 'INSERT INTO statuses (id, message, name, date) VALUES (:id, :message, :name, :date)';
         } else {
             $query = 'UPDATE FROM statuses (id, message, name, date) VALUES (:id, :message, :name, :date) WHERE id = :id';

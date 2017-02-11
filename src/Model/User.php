@@ -12,7 +12,7 @@ class User
     /**
      * @var string
      */
-    private $login;
+    private $username;
 
     /**
      * @var string
@@ -24,10 +24,10 @@ class User
      * @param string   $pattern
      * @param callable $callable
      */
-    public function __construct($login, $password)
+    public function __construct($username, $password)
     {
         $this->id    = uniqid();
-        $this->login   = $login;
+        $this->username   = $username;
         $this->password  = $password;
     }
 
@@ -42,9 +42,9 @@ class User
     /**
      * @return string
      */
-    public function getLogin()
+    public function getUsername()
     {
-        return $this->login;
+        return $this->username;
     }
 
     /**

@@ -12,17 +12,24 @@ private $con;
 
     public function persist(\Model\User $user)
     {
-        $id = $user->getId();
+        $userFinder = new UserFinder($this->con);
 
-        if(!$finder->findOneById($id)){
-            $stmt = $this->con->prepare('INSERT INTO users (id, username, password) VALUES (:id, :username, :password)');
+        $id = $user->getId();
+        
+        if(!$userFinder->findOneByUsername($user->getUsername())){
+            $query = 'INSERT INTO users (id, username, password) VALUES (:id, :username, :password)';
         } else {
-            $stmt = $this->con->prepare('UPDATE FROM users (id, username, password) VALUES (:id, :username, :password) WHERE id = :id');
+            $query = 'UPDATE FROM users (id, username, password) VALUES (:id, :username, :password) WHERE id = :id';
         }
-            $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
-            $stmt->bindParam(':username', $user->getUsername(), PDO::PARAM_STR);  
-            $stmt->bindParam(':password', $user->getPassword(), PDO::PARAM_STR);  
-            return $stmt->execute();
+        $parameters = array(
+            'id' => $id,
+            'username' => $user->getUsername(),
+            'password' => $user->getPassword(),
+        );
+        var_dump('ok');
+        var_dump($this->con->executeQuery($query, $parameters));
+        var_dump('ok');
+        return $this->con->executeQuery($query, $parameters);
     }
 
     public function remove(\Model\User $user)

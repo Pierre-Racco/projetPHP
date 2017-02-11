@@ -15,14 +15,12 @@ class UserFinder implements FinderInterface
      */
     public function findOneById($id, $criteria = null)
     {
-
-        $stmt = $con->prepare('SELECT * FROM users WHERE id = :id');
+        $stmt = $this->con->prepare('SELECT * FROM users WHERE id = :id');
         $stmt->bindParam(':id', $id,  \PDO::PARAM_INT);
         $stmt->execute();
-        $stmt->fetchObject('Model\User');
-
-        return $stmt
-;    }
+        var_dump($stmt->fetchObject('Model\User'));
+        return $stmt->fetchObject('Model\User');
+    }
 
     /**
      * @return string
@@ -32,8 +30,7 @@ class UserFinder implements FinderInterface
 
         $stmt = $this->con->prepare('SELECT * FROM users');
         $stmt->execute();
-        $stmt->fetchAll(\PDO::FETCH_CLASS, 'Model\User');
-        return $stmt;
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, 'Model\User');
     }
 
     /**
@@ -44,7 +41,6 @@ class UserFinder implements FinderInterface
 
         $stmt = $this->con->prepare('SELECT * FROM users WHERE username = :username');
         $stmt->execute(["username" => $username]);
-        $stmt->fetchObject('Model\User');
-        return $stmt;
+        return $stmt->fetchObject('Model\User');
     }
 }

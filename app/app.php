@@ -117,12 +117,16 @@ $app->post('/signin', function (Request $request) use ($app, $con) {
     $username = $request->getParameter('username');
     $password = $request->getParameter('password');
     $passHash = password_hash($password, PASSWORD_BCRYPT);
-
-    if($uf->findOneByUsername($username)){ //gestion unique username erreur
+    if($userFinder->findOneByUsername($username)){ //gestion unique username erreur
     	throw new Exception\HttpException(400, "Nom d'utilisateur déjà prit");
+    	return $app->redirect('/');
     }
-    $user = new \Model\User($login, $passHash);
+
+    $user = new Model\User($username, $passHash);
     $userMapper->persist($user);
+
+    $_SESSION['is_authenticated'] = true;
+    $_SESSION['user'] = $userFinder->findOneByUsername($username);
     return $app->redirect('/');
     
 
