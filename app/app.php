@@ -1,11 +1,14 @@
 <?php
 // php -S localhost:8000 -d error_reporti=-1 -d display_errors=On -t ./web
 require __DIR__ . '/../vendor/autoload.php';
+include __DIR__ . '/config/config.php';
+
 use Http\Request;
 use Http\Response;
-include __DIR__ . '/config/config.php';
+
 ini_set('display_errors',1);
 error_reporting(E_ALL | E_STRICT);
+
 // Config
 $debug = false;
 
@@ -15,7 +18,7 @@ $app = new \App(new View\TemplateEngine(
 echo $host.$dbname.$charset.$username.$password;
 $con;
 
-//$con  = new \Model\Connection('mysql:host='.$host.';dbname='.$dbname.';charset='.$charset, $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+$con  = new \Dal\Connection('mysql:host='.$host.';dbname='.$dbname.';charset='.$charset, $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
 /*$con  = new \Model\Connection('sqlite:/tmp/foo.db');
 $mapper = new \Model\StatusMapper($con);*/
 
