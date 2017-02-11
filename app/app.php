@@ -33,17 +33,17 @@ $app->get('/', function () use ($app) {
 * Get all statuses
 */
 $app->get('/statuses', function (Request $request) use ($app, $con) {
-	$sf = new \Model\StatusFinder($con);
+	$statusFinder = new \Model\StatusFinder($con);
 	
 	if($request->guessBestFormat() == "text/html; charset=UTF-8"){
 		// Format html ?
 
 		
-		return $app->render('statuses.php', $sf->findAll());
+		return $app->render('statuses.php', $statusFinder->findAll());
 	} else if($request->guessBestFormat() == "application/json"){
 		// Format Json ?
 		
-		$jSonresponse = new \Http\JSONResponse(json_encode($sf->findAll()), 200);
+		$jSonresponse = new \Http\JSONResponse(json_encode($statusFinder->findAll()), 200);
 		return $jSonresponse->getContent();
 	} else {
 		//Format invalide
@@ -57,8 +57,8 @@ $app->get('/statuses', function (Request $request) use ($app, $con) {
 * Status by ID
 */
 $app->get('/statuses/(\d+)', function (Request $request, $id) use ($app) {
-	$sf = new \Dal\StatusFinder($con);
-	$status = $sf->findOneById($id);
+	$statusFinder = new \Dal\StatusFinder($con);
+	$status = $statusFinder->findOneById($id);
 
 	if ($status != null) {
 		return $app->render('status.php', $status);
@@ -73,7 +73,7 @@ $app->get('/statuses/(\d+)', function (Request $request, $id) use ($app) {
 */
 $app->post('/statuses', function (Request $request) use ($app) {
 
-	$mapper = new \Dal\StatusMapper($con);
+	$statusMapper = new \Dal\StatusMapper($con);
 
 	$username = isset($_SESSION['user']) ? $_SESSION['user']->getLogin() : null;
 	$message = $request->getParameter('message');
@@ -88,12 +88,12 @@ $app->post('/statuses', function (Request $request) use ($app) {
 /*
 * Delete a status
 */
-$app->delete('/statuses/(\d+)', function (Request $request, Response $response = null, $id) use ($app) {
-	$jm = new \Model\JsonModificator();
-	$status = $jf->findOneById($id);
-	if ($jm->deleteStatus($id) != null) {
+$app->delete('/statuses/(\d+)', function (Request $request, $id) use ($app) {
+	$statusMapper = new \Dal\StatusMapper();
+	$status = $statusMapper->findOneById($id);
+	if ($status) {
 
-		$jm->deleteStatus($id);
+		$statusMapper->remove($status);
 		$app->redirect('/statuses', 204);
 	} else {
 		throw new Exception\HttpException(404, "Status not found"); 
@@ -120,7 +120,7 @@ $app->post('/signin', function (Request $request) use ($app, $con) {
     $username = $request->getParameter('username');
     $password = $request->getParameter('password');
     $passHash = password_hash($password, PASSWORD_BCRYPT);
-    
+
     if($uf->findOneByUsername($username)){ //gestion unique username erreur
     	throw new Exception\HttpException(400, "Nom d'utilisateur déjà prit");
     }
@@ -147,7 +147,7 @@ $app->post('/login', function (Request $request) use ($app, $con) {
 	$pass = $request->getParameter('password');
 	$user = $userFinder->findOneByUsername($username);
 
-	if ($user && password_verify($pass, $user->getPassword()) {
+	if ($user && password_verify($pass, $user->getPassword())) {
 		$_SESSION['is_authenticated'] = true;
 		return $app->redirect('/');
 	}
