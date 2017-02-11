@@ -4,6 +4,7 @@ namespace Dal;
 
 class UserFinder implements FinderInterface
 {
+    private $con;
 
     public function __construct(\Dal\Connection $con)
     {
@@ -18,12 +19,10 @@ class UserFinder implements FinderInterface
      */
     public function findOneById($id, $criteria = null)
     {
-        $stmt = $con->prepare('SELECT * FROM users WHERE id = :id');
+        $stmt = $this->con->prepare('SELECT * FROM users WHERE id = :id');
         $stmt->bindParam(':id', $id,  \PDO::PARAM_INT);
-        $stmt->execute($stmt);
-        $stmt->fetchObject('User');
-
-        return $stmt;
+        $stmt->execute();
+        return $stmt->fetchObject('Model\User');
     }
 
     /**
@@ -34,13 +33,9 @@ class UserFinder implements FinderInterface
      */
     public function findOneByUsername($username)
     {
-
-        $stmt = $this->con->prepare('SELECT * FROM users WHERE username = :username');
-        $stmt->bindParam(':username', $username,  \PDO::PARAM_STR);
-        $stmt->execute($stmt);
-        $stmt->fetchAll(\PDO::FETCH_CLASS, 'User');
-        
-        return $stmt;
+        $stmt = $this->con->prepare('SELECT * FROM users');
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, 'Model\User');
     }
 
     /**
@@ -49,10 +44,8 @@ class UserFinder implements FinderInterface
      */
     public function findAll()
     {
-        $stmt = $this->con->prepare('SELECT * FROM users');
-        $stmt->execute($stmt);
-        $stmt->fetchAll(\PDO::FETCH_CLASS, 'User');
-
-        return $stmt;
+        $stmt = $this->con->prepare('SELECT * FROM users WHERE username = :username');
+        $stmt->execute(["username" => $username]);
+        return $stmt->fetchObject('Model\User');
     }
 }

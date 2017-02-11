@@ -18,17 +18,21 @@ class UserMapper
      */
     public function persist(\Model\User $user)
     {
-        $id = $user->getId();
+        $userFinder = new UserFinder($this->con);
 
-        if(!$finder->findOneById($id)){
-            $stmt = $this->con->prepare('INSERT INTO users (id, username, password) VALUES (:id, :username, :password)');
+        $id = $user->getId();
+        
+        if(!$userFinder->findOneByUsername($user->getUsername())){
+            $query = 'INSERT INTO users (id, username, password) VALUES (:id, :username, :password)';
         } else {
-            $stmt = $this->con->prepare('UPDATE FROM users (id, username, password) VALUES (:id, :username, :password) WHERE id = :id');
+            $query = 'UPDATE FROM users (id, username, password) VALUES (:id, :username, :password) WHERE id = :id';
         }
-        $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
-        $stmt->bindParam(':username', $user->getUsername(), PDO::PARAM_STR);  
-        $stmt->bindParam(':password', $user->getPassword(), PDO::PARAM_STR);  
-        return $stmt->execute($stmt);
+        $parameters = array(
+            'id' => $id,
+            'username' => $user->getUsername(),
+            'password' => $user->getPassword(),
+        );
+        return $this->con->executeQuery($query, $parameters);
     }
 
     /**
@@ -41,9 +45,11 @@ class UserMapper
         //$id = $user->getId();
         // idem statusMapper
         if($finder->findOneById($id)){
-            $stmt = $this->con->prepare('DELETE FROM users WHERE id = :id');
-            $stmt->bindParam(':id', $id, \PDO::PARAM_INT);  
-            return $stmt->execute($stmt);
+            $query = 'DELETE FROM users WHERE id = :id';
+            $parameters = array(
+                'id' => $id,
+            );
+            return $this->con->executeQuery($query, $parameters);
         } else {
             return false;
         }

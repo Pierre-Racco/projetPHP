@@ -18,19 +18,28 @@ class StatusMapper
      */
     public function persist(\Model\Status $status)
     {
+        $statusFinder = new StatusFinder($this->con);
+        $userFinder = new UserFinder($this->con);
+        $user = $userFinder->findOneByUsername($status->getName());
+        if($user){
+            $fk_user_id = $user->getId();
+        }
         $id = $status->getId();
-
+        
         if($finder->findOneById($id)){
-            $stmt = $this->con->prepare('UPDATE FROM statuses (id, message, name, date) VALUES (:id, :message, :name, :date) WHERE id = :id');
+            $query = 'UPDATE FROM statuses (id, message, name, date) VALUES (:id, :message, :name, :date) WHERE id = :id';
             
         } else {
-            $stmt = $this->con->prepare('INSERT INTO statuses (id, message, name, date) VALUES (:id, :message, :name, :date)');
+            $query = 'INSERT INTO statuses (id, message, name, date) VALUES (:id, :message, :name, :date)';
         }
-        $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
-        $stmt->bindParam(':message', $status->getMessage(), \PDO::PARAM_STR);  
-        $stmt->bindParam(':name', $status->getName(), \PDO::PARAM_STR);  
-        $stmt->bindParam(':date', $status->getDate(), \PDO::PARAM_STR);
-        return $stmt->execute($stmt);
+        $parameters = array(
+            'id' => $status->getId(),
+            'message' => $status->getMessage(),
+            'name' => $status->getName(),
+            'date' => $status->getDate(),
+            'fk_user_id' => $fk_user_id
+        );
+        return $this->con->executeQuery($query, $parameters); 
     }
 
     /**
@@ -40,15 +49,17 @@ class StatusMapper
      */
     public function remove($id)
     {
+        $statusFinder = new StatusFinder($this->con);
         // à tester sans le if
         // execute return false s'il a pas trouvé d'élément à supprimer??
         if($finder->findOneById($id)){
-            $stmt = $this->con->prepare('DELETE FROM statuses WHERE id = :id');
-            $stmt->bindParam(':id', $id, \PDO::PARAM_INT);  
-            return $stmt->execute($stmt);
+            $query = 'DELETE FROM statuses WHERE id = :id';
+            $parameters = array(
+                'id' => $id
+            );
+            return $this->con->executeQuery($query, $parameters);
         } else {
             return false;
         }
-        
     }
 }

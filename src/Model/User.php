@@ -2,7 +2,7 @@
 
 namespace Model;
 
-class Status
+class User
 {
     /**
      * @var int
@@ -12,7 +12,7 @@ class Status
     /**
      * @var string
      */
-    private $login;
+    private $username;
 
     /**
      * @var string
@@ -23,7 +23,7 @@ class Status
      * @param string   $login
      * @param string   $password
      */
-    public function __construct($login, $password)
+    public function __construct($username, $password)
     {
         $this->id = uniqid();
         $this->login = $login;
@@ -41,9 +41,9 @@ class Status
     /**
      * @return string
      */
-    public function getLogin()
+    public function getUsername()
     {
-        return $this->login;
+        return $this->username;
     }
 
     /**
