@@ -18,7 +18,8 @@ class UserFinder implements FinderInterface
         $stmt = $this->con->prepare('SELECT * FROM users WHERE id = :id');
         $stmt->bindParam(':id', $id,  \PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetchObject('Model\User');
+        $user = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return new \Model\User($user[0]['id'], $user[0]['username'], $user[0]['password']);
     }
 
     /**
@@ -29,7 +30,12 @@ class UserFinder implements FinderInterface
 
         $stmt = $this->con->prepare('SELECT * FROM users');
         $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, 'Model\User');
+        
+
+        foreach ($users as $user) {
+            $returnArray[$user['id']] = new \Model\User($user['id'], $user['username'], $user['password']);
+        }
+        return $returnArray;
     }
 
     /**
@@ -40,6 +46,7 @@ class UserFinder implements FinderInterface
 
         $stmt = $this->con->prepare('SELECT * FROM users WHERE username = :username');
         $stmt->execute(["username" => $username]);
-        return $stmt->fetchObject('Model\User');
+        $user = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return new \Model\User($user[0]['id'], $user[0]['username'], $user[0]['password']);
     }
 }

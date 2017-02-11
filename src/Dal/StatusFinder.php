@@ -19,7 +19,8 @@ class StatusFinder implements FinderInterface
         $stmt = $this->con->prepare('SELECT * FROM statuses WHERE id = :id');
         $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetchObject('Model\Status');
+        $status = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return new \Model\Status($status[0]['id'], $status[0]['message'], $status[0]['name'], $status[0]['date']);
     }
 
     /**
@@ -27,9 +28,13 @@ class StatusFinder implements FinderInterface
      */
     public function findAll()
     {
-
+        $returnArray = [];
         $stmt = $this->con->prepare('SELECT * FROM statuses');
         $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, 'Model\Status');
+        $statuses = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        foreach ($statuses as $status) {
+            $returnArray[$status['id']] = new \Model\Status($status['id'], $status['message'], $status['name'], $status['date']);
+        }
+        return $returnArray;
     }
 }

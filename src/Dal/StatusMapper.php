@@ -30,8 +30,7 @@ private $con;
             'id' => $status->getId(),
             'message' => $status->getMessage(),
             'name' => $status->getName(),
-            'date' => $status->getDate(),
-            'fk_user_id' => $fk_user_id
+            'date' => $status->getDate()
         );
         return $this->con->executeQuery($query, $parameters); 
     }

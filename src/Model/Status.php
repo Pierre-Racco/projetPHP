@@ -29,12 +29,12 @@ class Status implements \JsonSerializable
      * @param string   $pattern
      * @param callable $callable
      */
-    public function __construct($message, $name)
+    public function __construct($id, $message, $name, $date)
     {
-        $this->id    = uniqid();
+        $this->id    = $id;
         $this->message   = $message;
         $this->name  = $name;
-        $this->date = date("Y-m-d H:i:s", time());
+        $this->date = $date;
     }
 
     /**

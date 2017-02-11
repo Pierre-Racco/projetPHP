@@ -71,11 +71,11 @@ $app->post('/statuses', function (Request $request) use ($app, $con) {
 
 	$statusMapper = new \Dal\StatusMapper($con);
 
-	$username = "lulz";
+	$username = 'a';
 	$message = $request->getParameter('message');
 	
-	$status = new Model\Status($message, $username);
-	var_dump($statusMapper->persist($status));
+	$status = new Model\Status(uniqid(), $message, $username, date("Y-m-d H:i:s", time()));
+	var_dump($status);
 	$statusMapper->persist($status);
 	
 	$app->redirect('/statuses', 204);
