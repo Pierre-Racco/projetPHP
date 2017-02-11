@@ -5,14 +5,14 @@ namespace Model;
 class Status implements \JsonSerializable
 {
     /**
-     * @var string
-     */
-    private $message;
-
-    /**
      * @var int
      */
     private $id;
+
+    /**
+     * @var string
+     */
+    private $message;
 
     /**
      * @var string

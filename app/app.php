@@ -13,17 +13,17 @@ $app = new \App(new View\TemplateEngine(
     __DIR__ . '/templates/'
 ), $debug);
 echo $host.$dbname.$charset.$username.$password;
-
+$con;
 
 //$con  = new \Model\Connection('mysql:host='.$host.';dbname='.$dbname.';charset='.$charset, $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
-$con  = new \Model\Connection('sqlite:/tmp/foo.db');
-$mapper = new \Model\StatusMapper($con);
+/*$con  = new \Model\Connection('sqlite:/tmp/foo.db');
+$mapper = new \Model\StatusMapper($con);*/
 
 
 /**
  * Index
  */
-$app->get('/', function (Request $request, Response $response = null) use ($app) {
+$app->get('/', function () use ($app) {
 
     $app->render('index.php');
 });
@@ -32,7 +32,7 @@ $app->get('/', function (Request $request, Response $response = null) use ($app)
 /*
 * Get all statuses
 */
-$app->get('/statuses', function (Request $request, Response $response = null) use ($app, $con) {
+$app->get('/statuses', function (Request $request) use ($app, $con) {
 	$sf = new \Model\StatusFinder($con);
 	
 	if($request->guessBestFormat() == "text/html; charset=UTF-8"){
@@ -56,11 +56,9 @@ $app->get('/statuses', function (Request $request, Response $response = null) us
 /**
 * Status by ID
 */
-$app->get('/statuses/(\d+)', function (Request $request, Response $response = null, $id) use ($app) {
-	$jf = new \Model\JsonFinder();
-	// $array = array();
-	$status = $jf->findOneById($id);
-
+$app->get('/statuses/(\d+)', function (Request $request, $id) use ($app) {
+	$sf = new \Dal\StatusFinder($con);
+	$status = $sf->findOneById($id);
 
 	if ($status != null) {
 		return $app->render('status.php', $status);
@@ -73,14 +71,15 @@ $app->get('/statuses/(\d+)', function (Request $request, Response $response = nu
 /*
 * Add a status
 */
-$app->post('/statuses', function (Request $request, Response $response = null) use ($app) {
+$app->post('/statuses', function (Request $request) use ($app) {
 
-	$mapper = new Model\StatusMapper($con);
+	$mapper = new \Dal\StatusMapper($con);
 
-	$username = $request->getParameter('username');
+	$username = isset($_SESSION['user']) ? $_SESSION['user']->getLogin() : null;
 	$message = $request->getParameter('message');
 	
 	$status = new Model\Status($message, $username);
+
 	$mapper->persist($status);
 	$app->redirect('/statuses', 204);
 
@@ -105,19 +104,31 @@ $app->delete('/statuses/(\d+)', function (Request $request, Response $response =
 /*
  * Sign In page
  */
-$app->get('/signin', function (Request $request) use ($app)
+$app->get('/signin', function (Request $request) use ($app){
 	return $app->render('signin.php');
+}
 );
 
 /*
  * Post Sign In
  */
 $app->post('/signin', function (Request $request) use ($app, $con) {
-	/*
-		TODO
-		check si username déjà présent dans base
-		ajout dans base
-	*/ 
+	
+	$userMapper = new \Dal\UserMapper($con);
+    $userFinder = new \Dal\UserFinder($con);
+
+    $username = $request->getParameter('username');
+    $password = $request->getParameter('password');
+    $passHash = password_hash($password, PASSWORD_BCRYPT);
+    
+    if($uf->findOneByUsername($username)){ //gestion unique username erreur
+    	throw new Exception\HttpException(400, "Nom d'utilisateur déjà prit");
+    }
+    $user = new \Model\User($login, $passHash);
+    $userMapper->persist($user);
+    return $app->redirect('/');
+    
+
 });
 /*
  * Login page
@@ -130,17 +141,16 @@ $app->get('/login', function () use ($app) {
  * Post connection
  */
 $app->post('/login', function (Request $request) use ($app, $con) {
-	$user = $request->getParameter('user');
-	$pass = $request->getParameter('password');
+	$userFinder = new \Dal\UserFinder($con);
 
-	// debut
-	//	|	à enlever avec ton mapper 
-	//	v
-	if ($user === 'admin' && $pass === 'admin') {
+	$username = $request->getParameter('user');
+	$pass = $request->getParameter('password');
+	$user = $userFinder->findOneByUsername($username);
+
+	if ($user && password_verify($pass, $user->getPassword()) {
 		$_SESSION['is_authenticated'] = true;
 		return $app->redirect('/');
 	}
-	// fin
 
 	return $app->render('login.php', ['user' => $user]);
 });
@@ -180,7 +190,7 @@ $app->addListener('process.before', function (Request $request) use ($app) {
     }
 
     switch ($request->guessBestFormat()) {
-        case 'json':
+        case 'application/json':
             throw new Exception\HttpException(401);
     }
 
