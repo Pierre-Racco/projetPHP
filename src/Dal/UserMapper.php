@@ -26,9 +26,6 @@ private $con;
             'username' => $user->getUsername(),
             'password' => $user->getPassword(),
         );
-        var_dump('ok');
-        var_dump($this->con->executeQuery($query, $parameters));
-        var_dump('ok');
         return $this->con->executeQuery($query, $parameters);
     }
 
@@ -37,9 +34,11 @@ private $con;
         $id = $user->getId();
 
         if($finder->findOneById($id)){
-            $stmt = $this->con->prepare('DELETE FROM users WHERE id = :id');
-            $stmt->bindParam(':id', $id, \PDO::PARAM_INT);  
-            return $stmt->execute();
+            $query = 'DELETE FROM users WHERE id = :id';
+            $parameters = array(
+                'id' => $id,
+            );
+            return $this->con->executeQuery($query, $parameters);
         } else {
 
         }

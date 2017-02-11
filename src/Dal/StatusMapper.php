@@ -42,9 +42,11 @@ private $con;
         $id = $status->getId();
 
         if($statusFinder->findOneById($id)){
-            $stmt = $this->con->prepare('DELETE FROM statuses WHERE id = :id');
-            $stmt->bindParam(':id', $id, \PDO::PARAM_INT);  
-            return $stmt->execute();
+            $query = 'DELETE FROM statuses WHERE id = :id';
+            $parameters = array(
+                'id' => $id
+            );
+            return $this->con->executeQuery($query, $parameters); 
         } else {
 
         }

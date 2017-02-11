@@ -18,7 +18,6 @@ class UserFinder implements FinderInterface
         $stmt = $this->con->prepare('SELECT * FROM users WHERE id = :id');
         $stmt->bindParam(':id', $id,  \PDO::PARAM_INT);
         $stmt->execute();
-        var_dump($stmt->fetchObject('Model\User'));
         return $stmt->fetchObject('Model\User');
     }
 
