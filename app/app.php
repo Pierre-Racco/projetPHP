@@ -8,27 +8,22 @@ use Http\Response;
 
 ini_set('display_errors',1);
 error_reporting(E_ALL | E_STRICT);
-
+date_default_timezone_set('UTC');
 // Config
 $debug = false;
 
 $app = new \App(new View\TemplateEngine(
     __DIR__ . '/templates/'
 ), $debug);
-echo $host.$dbname.$charset.$username.$password;
-$con;
+/*echo $host.' '.$dbname.' '.$charset.' '.$username.' '.$password;*/
 
-$con  = new \Dal\Connection('mysql:host='.$host.';dbname='.$dbname.';charset='.$charset, $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
-/*$con  = new \Model\Connection('sqlite:/tmp/foo.db');
-$mapper = new \Model\StatusMapper($con);*/
-
+$con  = new Dal\Connection('mysql:host='.$host.';port='.$port.';dbname='.$dbname, $username, $password, array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION));
 
 /**
  * Index
  */
 $app->get('/', function () use ($app) {
-
-    $app->render('index.php');
+    $app->redirect('/statuses');
 });
 
 
@@ -36,11 +31,10 @@ $app->get('/', function () use ($app) {
 * Get all statuses
 */
 $app->get('/statuses', function (Request $request) use ($app, $con) {
-	$statusFinder = new \Model\StatusFinder($con);
+	$statusFinder = new \Dal\StatusFinder($con);
 	
 	if($request->guessBestFormat() == "text/html; charset=UTF-8"){
 		// Format html ?
-
 		
 		return $app->render('statuses.php', $statusFinder->findAll());
 	} else if($request->guessBestFormat() == "application/json"){
@@ -59,10 +53,10 @@ $app->get('/statuses', function (Request $request) use ($app, $con) {
 /**
 * Status by ID
 */
-$app->get('/statuses/(\d+)', function (Request $request, $id) use ($app) {
+$app->get('/statuses/(\d+)', function (Request $request, $id) use ($app, $con) {
 	$statusFinder = new \Dal\StatusFinder($con);
 	$status = $statusFinder->findOneById($id);
-
+	var_dump("je");
 	if ($status != null) {
 		return $app->render('status.php', $status);
 	} else {
@@ -74,16 +68,16 @@ $app->get('/statuses/(\d+)', function (Request $request, $id) use ($app) {
 /*
 * Add a status
 */
-$app->post('/statuses', function (Request $request) use ($app) {
+$app->post('/statuses', function (Request $request) use ($app, $con) {
 
 	$statusMapper = new \Dal\StatusMapper($con);
 
-	$username = isset($_SESSION['user']) ? $_SESSION['user']->getLogin() : null;
+	$username = "lulz";
 	$message = $request->getParameter('message');
 	
 	$status = new Model\Status($message, $username);
 
-	$mapper->persist($status);
+	$statusMapper->persist($status);
 	$app->redirect('/statuses', 204);
 
 });
@@ -199,5 +193,25 @@ $app->addListener('process.before', function (Request $request) use ($app) {
 
     return $app->redirect('/login');
 });
+
+function getCriterias(Request $request)
+{
+    $limit = $request->getParameter('limit');
+    $order = $request->getParameter('orderBy');
+    $field = $request->getParameter('field');
+    $value = $request->getParameter('value');
+
+    $lim = null;
+    if (isset($limit)) {
+        $lim = '0, ' . $limit;
+    }
+
+    $where = null;
+    if (isset($field) && isset($value)) {
+        $where = $field . ' LIKE "%'.$value.'%"';
+    }
+
+    return ['where' => $where, 'order by' => $order, 'limit' => $lim];
+} 
 
 return $app;

@@ -12,6 +12,7 @@ private $con;
 
     public function persist(\Model\Status $status)
     {
+        $finder = new StatusFinder($this->con);
         $id = $status->getId();
 
         if(!$finder->findOneById($id)){

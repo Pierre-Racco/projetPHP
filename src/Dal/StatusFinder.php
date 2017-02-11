@@ -19,10 +19,10 @@ class StatusFinder implements FinderInterface
         $stmt = $this->con->prepare('SELECT * FROM statuses WHERE id = :id');
         $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
         $stmt->execute($stmt);
-        $stmt->fetchObject('Status');
+        $stmt->fetchObject('Model\Status');
 
-        return $stmt
-;    }
+        return $stmt;
+    }
 
     /**
      * @return string
@@ -32,7 +32,6 @@ class StatusFinder implements FinderInterface
 
         $stmt = $this->con->prepare('SELECT * FROM statuses');
         $stmt->execute($stmt);
-        $stmt->fetchAll(\PDO::FETCH_CLASS, 'Status');
-        return $stmt;
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, 'Model\Status');
     }
 }
