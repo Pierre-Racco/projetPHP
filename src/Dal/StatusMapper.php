@@ -20,22 +20,20 @@ class StatusMapper
     {
         $statusFinder = new StatusFinder($this->con);
         $userFinder = new UserFinder($this->con);
-        $user = $userFinder->findOneByUsername($status->getName());
-        if($user){
-            $fk_user_id = $user->getId();
-        }
+        $user = $userFinder->findOneByUsername($status->getUserId());
         $id = $status->getId();
-        
-        if($finder->findOneById($id)){
-            $query = 'UPDATE FROM statuses (id, message, name, date) VALUES (:id, :message, :name, :date) WHERE id = :id';
+        var_dump($id);
+        var_dump($statusFinder->findOneById($id));
+        if($statusFinder->findOneById($id)){
+            $query = 'UPDATE FROM statuses (id, message, user_id, date) VALUES (:id, :message, :user_id, :date) WHERE id = :id';
             
         } else {
-            $query = 'INSERT INTO statuses (id, message, name, date) VALUES (:id, :message, :name, :date)';
+            $query = 'INSERT INTO statuses (id, message, user_id, date) VALUES (:id, :message, :user_id, :date)';
         }
         $parameters = array(
             'id' => $status->getId(),
             'message' => $status->getMessage(),
-            'name' => $status->getName(),
+            'user_id' => $status->getUserId(),
             'date' => $status->getDate()
         );
         return $this->con->executeQuery($query, $parameters); 

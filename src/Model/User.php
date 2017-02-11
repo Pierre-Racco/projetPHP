@@ -23,10 +23,10 @@ class User
      * @param string   $login
      * @param string   $password
      */
-    public function __construct($username, $password)
+    public function __construct($id, $username, $password)
     {
-        $this->id = uniqid();
-        $this->login = $login;
+        $this->id = $id;
+        $this->username = $username;
         $this->password = $password;
     }
 

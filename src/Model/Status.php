@@ -17,7 +17,7 @@ class Status implements \JsonSerializable
     /**
      * @var string
      */
-    private $name;
+    private $userId;
 
     /**
      * @var date
@@ -28,11 +28,11 @@ class Status implements \JsonSerializable
      * @param string   $message
      * @param string   $name
      */
-    public function __construct($id, $message, $name, $date)
+    public function __construct($id, $message, $userId, $date)
     {
         $this->id    = $id;
         $this->message   = $message;
-        $this->name  = $name;
+        $this->userId   = $userId;
         $this->date = $date;
     }
 
@@ -63,9 +63,9 @@ class Status implements \JsonSerializable
     /**
      * @return string
      */
-    public function getName()
+    public function getUserId()
     {
-        return $this->name;
+        return $this->userId;
     }
 
     /**
@@ -76,7 +76,7 @@ class Status implements \JsonSerializable
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'user_id' => $this->userId,
             'date' => $this->date,
             'message' => $this->message
         ];

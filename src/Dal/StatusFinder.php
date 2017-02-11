@@ -19,11 +19,17 @@ class StatusFinder implements FinderInterface
      */
     public function findOneById($id, $criteria = null)
     {
+
         $stmt = $this->con->prepare('SELECT * FROM statuses WHERE id = :id');
-        $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
+        $stmt->bindParam(':id', $id, \PDO::PARAM_STR);
         $stmt->execute();
-        $status = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        return new \Model\Status($status[0]['id'], $status[0]['message'], $status[0]['name'], $status[0]['date']);
+        $status = $stmt->fetch(\PDO::FETCH_ASSOC);
+        if($status){
+            return new \Model\Status($status['id'], $status['message'], $status['user_id'], $status['date']);
+        } else {
+            return false;
+        }
+        
     }
 
     /**
@@ -37,7 +43,7 @@ class StatusFinder implements FinderInterface
         $stmt->execute();
         $statuses = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         foreach ($statuses as $status) {
-            $returnArray[$status['id']] = new \Model\Status($status['id'], $status['message'], $status['name'], $status['date']);
+            $returnArray[$status['id']] = new \Model\Status($status['id'], $status['message'], $status['user_id'], $status['date']);
         }
         return $returnArray;
     }

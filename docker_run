@@ -5,8 +5,8 @@ docker run -d -p 3306  --volumes-from data_mysql -e MYSQL_USER=uframework -e MYS
 mysql uframework -hlocalhost -P3306 -uuframework -pp4ssw0rd < app/config/schema.sql
 =
 mysql uframework -hlocalhost -P3306 -uuframework -pp4ssw0rd
-CREATE TABLE IF NOT EXISTS users ( id INT(6) NOT NULL AUTO_INCREMENT, username VARCHAR(25) NOT NULL, password VARCHAR(25) NOT NULL, PRIMARY KEY (ID)) ENGINE=InnoDB;
-CREATE TABLE IF NOT EXISTS statuses ( id INT(6) NOT NULL AUTO_INCREMENT, message VARCHAR(500) NOT NULL, name VARCHAR(250) NOT NULL, date DATETIME NOT NULL, PRIMARY KEY (ID), CONSTRAINT fk_user_id FOREIGN KEY (id) REFERENCES users(id)) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS users ( id VARCHAR(9) NOT NULL, username VARCHAR(25) NOT NULL, password VARCHAR(25) NOT NULL, PRIMARY KEY (id)) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS statuses ( id VARCHAR(9) NOT NULL, message VARCHAR(500) NOT NULL, user_id VARCHAR(9) NOT NULL, date DATETIME NOT NULL, PRIMARY KEY (id), CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(id)) ENGINE=InnoDB;
 
 mode interactif 
 ( docker exec -i -t {id} /bin/bash )

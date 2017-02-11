@@ -72,10 +72,10 @@ $app->post('/statuses', function (Request $request) use ($app, $con) {
 
 	$statusMapper = new \Dal\StatusMapper($con);
 
-	$username = 'a';
+	$user_id = $_SESSION['user']->getId();
 	$message = $request->getParameter('message');
 	
-	$status = new Model\Status(uniqid(), $message, $username, date("Y-m-d H:i:s", time()));
+	$status = new Model\Status(uniqid(), $message, $user_id, date("Y-m-d H:i:s", time()));
 	var_dump($status);
 	$statusMapper->persist($status);
 	
@@ -127,7 +127,7 @@ $app->post('/signin', function (Request $request) use ($app, $con) {
     	return $app->redirect('/');
     }
 
-    $user = new Model\User($username, $passHash);
+    $user = new Model\User(uniqid(), $username, $passHash);
     $userMapper->persist($user);
 
     $_SESSION['is_authenticated'] = true;

@@ -6,7 +6,7 @@
 	<body>
 		<?php foreach($parameters as $status){ ?>
 			<div>
-				<p><?=$status->getName();?></p>
+				<p><?=$status->getUserId();?></p>
 				<p><?=$status->getMessage();?></p>
 				<p><?=$status->getDate();?></p>
 				<a href='/statuses/".$status->getId()."'></a>
