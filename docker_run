@@ -1,8 +1,10 @@
 docker run -d --volume /var/lib/mysql --name data_mysql --entrypoint /bin/echo busybox --add ./app/config/schema.sql /tmp/ "mysql data-only container"
+
 docker run -d -p 3306  --volumes-from data_mysql -e MYSQL_USER=uframework -e MYSQL_PASS=p4ssw0rd  -e ON_CREATE_DB=uframework  tutum/mysql
+
 mysql uframework -hlocalhost -P3306 -uuframework -pp4ssw0rd < app/config/schema.sql
 =
-mysql uframework -hlocalhost -P3306 -uuframework -pp4ssw0rd 
+mysql uframework -hlocalhost -P3306 -uuframework -pp4ssw0rd
 CREATE TABLE IF NOT EXISTS users ( id INT(6) NOT NULL AUTO_INCREMENT, username VARCHAR(25) NOT NULL, password VARCHAR(25) NOT NULL, PRIMARY KEY (ID)) ENGINE=InnoDB;
 CREATE TABLE IF NOT EXISTS statuses ( id INT(6) NOT NULL AUTO_INCREMENT, message VARCHAR(500) NOT NULL, name VARCHAR(250) NOT NULL, date DATETIME NOT NULL, PRIMARY KEY (ID), CONSTRAINT fk_user_id FOREIGN KEY (id) REFERENCES users(id)) ENGINE=InnoDB;
 

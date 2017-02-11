@@ -10,18 +10,16 @@ ini_set('display_errors',1);
 error_reporting(E_ALL | E_STRICT);
 
 // Config
-$debug = false;
+$debug = true;
 
 $app = new \App(new View\TemplateEngine(
     __DIR__ . '/templates/'
 ), $debug);
 echo $host.$dbname.$charset.$username.$password;
-$con;
-
+echo phpinfo();
 $con  = new \Dal\Connection('mysql:host='.$host.';dbname='.$dbname.';charset='.$charset, $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
 /*$con  = new \Model\Connection('sqlite:/tmp/foo.db');
 $mapper = new \Model\StatusMapper($con);*/
-
 
 /**
  * Index
@@ -93,14 +91,19 @@ $app->post('/statuses', function (Request $request) use ($app) {
 */
 $app->delete('/statuses/(\d+)', function (Request $request, $id) use ($app) {
 	$statusMapper = new \Dal\StatusMapper();
-	$status = $statusMapper->findOneById($id);
-	if ($status) {
+	//$status = $statusMapper->findOneById($id);
+	if ($statusMapper->remove($id)){
+		$app->redirect('/statuses', 204);
+	} else {
+		throw new Exception\HttpException(404, "Status not found");
+	}
+	/*if ($status) {
 
 		$statusMapper->remove($status);
 		$app->redirect('/statuses', 204);
 	} else {
-		throw new Exception\HttpException(404, "Status not found"); 
-	}
+		 
+	}*/
 });
 
 
@@ -109,8 +112,7 @@ $app->delete('/statuses/(\d+)', function (Request $request, $id) use ($app) {
  */
 $app->get('/signin', function (Request $request) use ($app){
 	return $app->render('signin.php');
-}
-);
+});
 
 /*
  * Post Sign In
@@ -130,9 +132,8 @@ $app->post('/signin', function (Request $request) use ($app, $con) {
     $user = new \Model\User($login, $passHash);
     $userMapper->persist($user);
     return $app->redirect('/');
-    
-
 });
+
 /*
  * Login page
  */

@@ -25,15 +25,14 @@ class Status implements \JsonSerializable
     private $date;
 
     /**
-     * @param string   $method
-     * @param string   $pattern
-     * @param callable $callable
+     * @param string   $message
+     * @param string   $name
      */
     public function __construct($message, $name)
     {
-        $this->id    = uniqid();
-        $this->message   = $message;
-        $this->name  = $name;
+        $this->id = uniqid(); // uniqid & schema base id auto increment??
+        $this->message = $message;
+        $this->name = $name;
         $this->date = date("Y-m-d H:i:s", time());
     }
 
@@ -69,6 +68,10 @@ class Status implements \JsonSerializable
         return $this->name;
     }
 
+    /**
+     * Utile pour la sérialization d'un status
+     * @return Array représentant un status
+     */
     public function jsonSerialize()
     {
         return [

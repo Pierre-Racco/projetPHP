@@ -20,15 +20,14 @@ class Status
     private $password;
 
     /**
-     * @param string   $method
-     * @param string   $pattern
-     * @param callable $callable
+     * @param string   $login
+     * @param string   $password
      */
     public function __construct($login, $password)
     {
-        $this->id    = uniqid();
-        $this->login   = $login;
-        $this->password  = $password;
+        $this->id = uniqid();
+        $this->login = $login;
+        $this->password = $password;
     }
 
     /**
