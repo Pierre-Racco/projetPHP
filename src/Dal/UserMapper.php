@@ -22,7 +22,7 @@ private $con;
             $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
             $stmt->bindParam(':username', $user->getUsername(), PDO::PARAM_STR);  
             $stmt->bindParam(':password', $user->getPassword(), PDO::PARAM_STR);  
-            return $stmt->execute($stmt);
+            return $stmt->execute();
     }
 
     public function remove(\Model\User $user)
@@ -32,7 +32,7 @@ private $con;
         if($finder->findOneById($id)){
             $stmt = $this->con->prepare('DELETE FROM users WHERE id = :id');
             $stmt->bindParam(':id', $id, \PDO::PARAM_INT);  
-            return $stmt->execute($stmt);
+            return $stmt->execute();
         } else {
 
         }

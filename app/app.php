@@ -56,7 +56,6 @@ $app->get('/statuses', function (Request $request) use ($app, $con) {
 $app->get('/statuses/(\d+)', function (Request $request, $id) use ($app, $con) {
 	$statusFinder = new \Dal\StatusFinder($con);
 	$status = $statusFinder->findOneById($id);
-	var_dump("je");
 	if ($status != null) {
 		return $app->render('status.php', $status);
 	} else {
@@ -76,9 +75,9 @@ $app->post('/statuses', function (Request $request) use ($app, $con) {
 	$message = $request->getParameter('message');
 	
 	$status = new Model\Status($message, $username);
-
+	var_dump($status);
 	$statusMapper->persist($status);
-	$app->redirect('/statuses', 204);
+	
 
 });
 
