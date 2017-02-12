@@ -77,7 +77,7 @@ class Request
         $negotiator = new \Negotiation\Negotiator();
         $acceptHeader = $_SERVER['HTTP_ACCEPT'];
 
-        $priorities   = array('text/html; charset=UTF-8', 'application/json');
+        $priorities   = array('text/html', 'application/json');
 
         $mediaType = $negotiator->getBest($acceptHeader, $priorities);
 

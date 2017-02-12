@@ -84,11 +84,10 @@ class App
 
             array_unshift($arguments, $response);
             array_unshift($arguments, $request);
-
-            if ($response == null) {
+            $response = call_user_func_array($route->getCallable(), $arguments);
+            if (is_string($response)) {
                 http_response_code($this->statusCode);
-                echo call_user_func_array($route->getCallable(), $arguments);
-
+                echo $response;
             } else {
                 $response->send();
             }

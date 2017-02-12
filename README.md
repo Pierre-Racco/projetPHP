@@ -51,7 +51,7 @@
 
 	GET /statuses
 	GET /statuses/{id}
-	GET /statuses?{criteres}
+	GET /statuses?{user/limit/orderBy}
 	POST /statuses
 	DELETE /statuses/{id}
 
@@ -64,8 +64,8 @@
 	POST /signin
 
 	Fonctionnelle en session
-	Non fonctionnelle pour l'API
+	Non fonctionnelle pour l'API en stateless
 
 #### Tests
 
-	A rectifier
+	A améliorer

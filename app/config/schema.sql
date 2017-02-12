@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS statuses (
    id           INT             NOT NULL AUTO_INCREMENT, 
    message      VARCHAR(500)    NOT NULL, 
-   user_id      INT             NOT NULL,
+   user_id      INT             ,
    date         DATETIME        NOT NULL,
    PRIMARY KEY (id),
    CONSTRAINT fk_UserId

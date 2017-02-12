@@ -20,12 +20,12 @@ class StatusFinder implements FinderInterface
     public function findOneById($id)
     {
 
-        $stmt = $this->con->prepare('SELECT * FROM statuses WHERE id = :id');
+        $stmt = $this->con->prepare('SELECT s.id , s.message , u.username , s.date FROM statuses AS s, users AS u WHERE s.id = :id');
         $stmt->bindParam(':id', $id, \PDO::PARAM_STR);
         $stmt->execute();
         $status = $stmt->fetch(\PDO::FETCH_ASSOC);
         if($status){
-            return new \Model\Status($status['id'], $status['message'], $status['user_id'], $status['date']);
+            return new \Model\Status($status['id'], $status['message'], $status['username'], $status['date']);
         } else {
             return false;
         }
@@ -52,7 +52,7 @@ class StatusFinder implements FinderInterface
             }
             
         }
-        $query = 'SELECT * FROM statuses';
+        $query = 'SELECT s.id , s.message , u.username , s.date  FROM statuses AS s LEFT JOIN users u ON s.user_id = u.id';
             if (isset($criterias)) {
                 $query .= ' '.preg_replace("/ AND $/", '', $complete);
             }
@@ -60,7 +60,7 @@ class StatusFinder implements FinderInterface
         $stmt->execute();
         $statuses = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         foreach ($statuses as $status) {
-            $returnArray[$status['id']] = new \Model\Status($status['id'], $status['message'], $status['user_id'], $status['date']);
+            $returnArray[$status['id']] = new \Model\Status($status['id'], $status['message'], $status['username'], $status['date']);
         }
         return $returnArray;
     }

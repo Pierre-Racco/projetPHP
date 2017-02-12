@@ -15,9 +15,9 @@ class Status implements \JsonSerializable
     private $message;
 
     /**
-     * @var int
+     * @var string
      */
-    private $userId;
+    private $user_username;
 
     /**
      * @var date
@@ -28,11 +28,11 @@ class Status implements \JsonSerializable
      * @param string   $message
      * @param string   $name
      */
-    public function __construct($id = null, $message, $userId, $date)
+    public function __construct($id = null, $message, $user_username = null, $date)
     {
         $this->id    = $id;
         $this->message   = $message;
-        $this->userId   = $userId;
+        $this->user_username   = ($user_username == null) ? "Anonymous" : $user_username;
         $this->date = $date;
     }
 
@@ -61,11 +61,11 @@ class Status implements \JsonSerializable
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getUserId()
+    public function getUserUsername()
     {
-        return $this->userId;
+        return $this->user_username;
     }
 
     /**
@@ -76,7 +76,7 @@ class Status implements \JsonSerializable
     {
         return [
             'id' => $this->id,
-            'user_id' => $this->userId,
+            'user_username' => $this->user_username,
             'date' => $this->date,
             'message' => $this->message
         ];

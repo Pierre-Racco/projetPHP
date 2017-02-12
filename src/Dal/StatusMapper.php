@@ -20,10 +20,13 @@ class StatusMapper
     {
         $statusFinder = new StatusFinder($this->con);
         $userFinder = new UserFinder($this->con);
-        $user = $userFinder->findOneByUsername($status->getUserId());
+        $user = $userFinder->findOneByUsername($status->getUserUsername());
         $id = $status->getId();
-        var_dump($id);
-        var_dump($statusFinder->findOneById($id));
+        if ($user != null) {
+            $user_id = $user->getId();
+        } else {
+            $user_id = null;
+        }
         if($statusFinder->findOneById($id)){
             $query = 'UPDATE FROM statuses (id, message, user_id, date) VALUES (:id, :message, :user_id, :date) WHERE id = :id';
             
@@ -33,7 +36,7 @@ class StatusMapper
         $parameters = array(
             'id' => $status->getId(),
             'message' => $status->getMessage(),
-            'user_id' => $status->getUserId(),
+            'user_id' => $user_id,
             'date' => $status->getDate()
         );
         return $this->con->executeQuery($query, $parameters); 
@@ -47,16 +50,13 @@ class StatusMapper
     public function remove($id)
     {
         $statusFinder = new StatusFinder($this->con);
-        // à tester sans le if
-        // execute return false s'il a pas trouvé d'élément à supprimer??
+
         if($statusFinder->findOneById($id)){
             $query = 'DELETE FROM statuses WHERE id = :id';
             $parameters = array(
                 'id' => $id
             );
             return $this->con->executeQuery($query, $parameters);
-        } else {
-            return false;
         }
     }
 }

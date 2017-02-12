@@ -32,9 +32,9 @@ $app->get('/', function () use ($app) {
 $app->get('/statuses', function (Request $request) use ($app, $con) {
 	$statusFinder = new \Dal\StatusFinder($con);
 
-	if($request->guessBestFormat() == "text/html; charset=UTF-8"){
+	if($request->guessBestFormat() == "text/html"){
 		// Format html ?
-		return $app->render('statuses.php', $statusFinder->findAll($request->getParameters()));
+		return new \Http\Response($app->render('statuses.php', $statusFinder->findAll($request->getParameters())));
 	} else if($request->guessBestFormat() == "application/json"){
 		// Format Json ?
 		
@@ -70,11 +70,15 @@ $app->get('/statuses/(\d+)', function (Request $request, Response $response = nu
 $app->post('/statuses', function (Request $request) use ($app, $con) {
 
 	$statusMapper = new \Dal\StatusMapper($con);
-
-	$user_id = $_SESSION['user']->getId();
+	if (isset($_SESSION['is_authenticated']) && $_SESSION['is_authenticated']) {
+            $user_username = $_SESSION['user']->getUsername();
+    } else {
+            $user_username = null;
+    }
+	
 	$message = $request->getParameter('message');
 	
-	$status = new Model\Status(null, $message, $user_id, date("Y-m-d H:i:s", time()));
+	$status = new Model\Status(null, $message, $user_username, date("Y-m-d H:i:s", time()));
 	$statusMapper->persist($status);
 	
 	$app->redirect('/statuses', 204);
@@ -89,11 +93,11 @@ $app->delete('/statuses/(\d+)', function (Request $request, Response $response =
 	$statusFinder = new \Dal\StatusFinder($con);
 	
 	$status = $statusFinder->findOneById($id);
-	$user_id = $_SESSION['user']->getId();
-	if ($status && $user_id === $status->getUserId()){
+	$user_id = $_SESSION['user']->getUsername();
+	if ($status && $user_id === $status->getUserUsername()){
 		$statusMapper->remove($id);
 		$app->redirect('/statuses', 204);
-	} else if ($status && $user_id !== $status->getUserId()){
+	} else if ($status && $user_id !== $status->getUserUsername()){
 		$app->redirect('/statuses', 204);
 	} else {
 		throw new Exception\HttpException(404, "Status not found");
@@ -197,25 +201,5 @@ $app->addListener('process.before', function (Request $request) use ($app) {
 
     return $app->redirect('/login');
 });
-
-function getCriterias(Request $request)
-{
-    $limit = $request->getParameter('limit');
-    $order = $request->getParameter('orderBy');
-    $field = $request->getParameter('field');
-    $value = $request->getParameter('value');
-
-    $lim = null;
-    if (isset($limit)) {
-        $lim = '0, ' . $limit;
-    }
-
-    $where = null;
-    if (isset($field) && isset($value)) {
-        $where = $field . ' LIKE "%'.$value.'%"';
-    }
-
-    return ['where' => $where, 'order by' => $order, 'limit' => $lim];
-} 
 
 return $app;

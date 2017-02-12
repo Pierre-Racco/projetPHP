@@ -16,10 +16,10 @@
 					</div>
 					<div class="panel-body">
 						<form action="/statuses" method="POST" class="input-group">
-						    <textarea <?php if(!isset($_SESSION['user'])){ ?> disabled <?php } ?> class="form-control textarea-style" name="message" placeholder="Votre meow ici"></textarea>
+						    <textarea class="form-control textarea-style" name="message" placeholder="Votre meow ici"></textarea>
 						    
 						    <input type="hidden" name="_method" value="POST">
-						    <input <?php if(!isset($_SESSION['user'])){ ?> disabled <?php } ?> class="btn btn-primary send-meow" type="submit" value="Meow!">
+						    <input class="btn btn-primary send-meow" type="submit" value="Meow!">
 						</form>
 					</div>
 					
@@ -28,18 +28,18 @@
 				<div class="flex-vertical">
 					<?php foreach($parameters as $status){
 						if(isset($_SESSION['user'])){
-							$userId = $_SESSION['user']->getId();
+							$userUsername = $_SESSION['user']->getUsername();
 						} else {
-							$userId = null;
-						}
-						
+							$userUsername = null;
+						}					
 						
 					?>
 						<div class="status-element">
+							<h3><?=$status->getUserUsername();?></h3>
 							<p><?=$status->getMessage();?></p>
 							<p><?=$status->getDate();?></p>
 							<a href='/statuses/<?=$status->getId();?>'>Lien</a>
-							<?php if ($userId === $status->getUserId()) {
+							<?php if ($userUsername === $status->getUserUsername()) {
             				?>
 							<form action="/statuses/<?= $status->getId(); ?>" method="POST">
 							  	<div class="group-btn">
