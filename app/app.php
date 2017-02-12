@@ -55,7 +55,6 @@ $app->get('/statuses/(\d+)', function (Request $request, Response $response = nu
 
 	$statusFinder = new \Dal\StatusFinder($con);
 	$status = $statusFinder->findOneById($id);
-
 	if ($status) {
 		return $app->render('status.php', ["status" => $status]);
 	} else {
@@ -93,15 +92,22 @@ $app->delete('/statuses/(\d+)', function (Request $request, Response $response =
 	$statusFinder = new \Dal\StatusFinder($con);
 	
 	$status = $statusFinder->findOneById($id);
-	$user_id = $_SESSION['user']->getUsername();
-	if ($status && $user_id === $status->getUserUsername()){
+	$user_id = isset($_SESSION['user']) ? $_SESSION['user']->getUsername() : null;
+
+	if($status){
+		$statusMapper->remove($id);
+		$app->redirect('/statuses', 204);
+	}
+	throw new Exception\HttpException(404, "Status not found");
+	/* Plante sans l'auth stateless */
+	/*if ($status && $user_id === $status->getUserUsername()){
 		$statusMapper->remove($id);
 		$app->redirect('/statuses', 204);
 	} else if ($status && $user_id !== $status->getUserUsername()){
 		$app->redirect('/statuses', 204);
 	} else {
 		throw new Exception\HttpException(404, "Status not found");
-	}
+	}*/
 });
 
 
@@ -132,7 +138,7 @@ $app->post('/signin', function (Request $request) use ($app, $con) {
 
     $_SESSION['is_authenticated'] = true;
     $_SESSION['user'] = $userFinder->findOneByUsername($username);
-    return $app->redirect('/');
+    return $app->redirect('/statuses');
 });
 
 /*
@@ -156,8 +162,10 @@ $app->post('/login', function (Request $request) use ($app, $con) {
 		$_SESSION['user'] = $user;
 		return $app->redirect('/statuses');
 	}
-
-	return $app->render('login.php', ['error' => "Identifiants invalides"]);
+	if(isset($_SESSION['is_authenticated']) == true){
+		return $app->render('login.php', ['error' => "Identifiants invalides"]);
+	}
+	throw new Exception\HttpException(404, "Login failed");
 });
 
 /*

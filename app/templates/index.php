@@ -17,9 +17,5 @@
 		    <input type="hidden" name="_method" value="POST">
 		    <input type="submit" value="Tweet!">
 		</form>
-
-
-		<blockquote class="twitter-tweet" data-lang="fr"><p lang="en" dir="ltr">PHP = PreHistoric Programming</p>&mdash; Hipster Hacker (@hipsterhacker) <a href="https://twitter.com/hipsterhacker/status/398863567400615936">8 novembre 2013</a></blockquote>
-		<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 	</body>
 </html>

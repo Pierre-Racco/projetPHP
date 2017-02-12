@@ -2,11 +2,13 @@
 <html>
 	<head>
 		<?php include 'header.php'; ?>
+		<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 	</head>
 	<body>
 		<?php include 'menu.php'; ?>
 		<div class="flex-horizontal">
 			<div class="left-column flex-vertical">
+				<blockquote class="twitter-tweet" data-lang="fr"><p lang="en" dir="ltr">PHP = PreHistoric Programming</p>&mdash; Hipster Hacker (@hipsterhacker) <a href="https://twitter.com/hipsterhacker/status/398863567400615936">8 novembre 2013</a></blockquote>
 			</div>
 			<div class="middle-column flex-vertical">
 				<h1>Tous les meows : </h1>
