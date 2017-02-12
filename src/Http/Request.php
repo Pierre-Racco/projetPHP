@@ -53,6 +53,11 @@ class Request
         }
     }
 
+    public function getParameters()
+    {
+        return $this->parameters;
+    }
+
     public static function createFromGlobals()
     {
         if((isset($_SERVER['CONTENT_TYPE']) &&  $_SERVER['CONTENT_TYPE']==='application/json')

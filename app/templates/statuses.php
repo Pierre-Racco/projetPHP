@@ -9,7 +9,7 @@
 			<div class="left-column flex-vertical">
 			</div>
 			<div class="middle-column flex-vertical">
-				
+				<h1>Tous les meows : </h1>
 				<div class="panel panel-primary flex-vertical write-meow">
 					<div class="panel-heading">
 						<h1>Exprimez-vous :</h1>

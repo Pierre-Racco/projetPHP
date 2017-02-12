@@ -1,24 +1,22 @@
 <?php
-// php -S localhost:8000 -d error_reporti=-1 -d display_errors=On -t ./web
+
 require __DIR__ . '/../vendor/autoload.php';
 include __DIR__ . '/config/config.php';
 
 use Http\Request;
 use Http\Response;
 
-ini_set('display_errors',1);
-error_reporting(E_ALL | E_STRICT);
 date_default_timezone_set('UTC');
-// Config
-$debug = true;
+
+$debug = false;
 
 $app = new \App(new View\TemplateEngine(
     __DIR__ . '/templates/'
 ), $debug);
 
-/*echo $host.' '.$dbname.' '.$charset.' '.$username.' '.$password;*/
 
-$con  = new Dal\Connection('mysql:host='.$host.';port='.$port.';dbname='.$dbname, $username, $password, array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION));
+
+$con  = new Dal\Connection('mysql:host='.$host.';port='.$port.';dbname='.$dbname, $username, $password);
 
 /**
  * Index
@@ -33,14 +31,14 @@ $app->get('/', function () use ($app) {
 */
 $app->get('/statuses', function (Request $request) use ($app, $con) {
 	$statusFinder = new \Dal\StatusFinder($con);
-	
+
 	if($request->guessBestFormat() == "text/html; charset=UTF-8"){
 		// Format html ?
-		return $app->render('statuses.php', $statusFinder->findAll());
+		return $app->render('statuses.php', $statusFinder->findAll($request->getParameters()));
 	} else if($request->guessBestFormat() == "application/json"){
 		// Format Json ?
 		
-		$jSonresponse = new \Http\JSONResponse(json_encode($statusFinder->findAll()), 200);
+		$jSonresponse = new \Http\JSONResponse(json_encode($statusFinder->findAll($request->getParameters())), 200);
 		return $jSonresponse->getContent();
 	} else {
 		//Format invalide

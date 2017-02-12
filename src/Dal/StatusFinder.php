@@ -17,7 +17,7 @@ class StatusFinder implements FinderInterface
      * @param criteria
      * @return status
      */
-    public function findOneById($id, $criteria = null)
+    public function findOneById($id)
     {
 
         $stmt = $this->con->prepare('SELECT * FROM statuses WHERE id = :id');
@@ -36,10 +36,27 @@ class StatusFinder implements FinderInterface
      * Retourne tous les status
      * @return statuses
      */
-    public function findAll()
+    public function findAll($criterias = null)
     {
         $returnArray = [];
-        $stmt = $this->con->prepare('SELECT * FROM statuses');
+        $complete ="";
+        foreach ($criterias as $parameter => $value) {
+            if($parameter == 'orderBy'){
+                $complete .= ' ORDER BY '.$value.' DESC AND ';
+            } else if($parameter == 'limit') {
+                $complete .= 'LIMIT '.$value.' AND ';
+            } else if ($parameter == 'user'){
+                $complete .= ' WHERE user_id = '.$value.' AND ';
+            } else {
+                $complete .= strtoupper($parameter).' '.$value.' AND ';
+            }
+            
+        }
+        $query = 'SELECT * FROM statuses';
+            if (isset($criterias)) {
+                $query .= ' '.preg_replace("/ AND $/", '', $complete);
+            }
+        $stmt = $this->con->prepare($query);
         $stmt->execute();
         $statuses = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         foreach ($statuses as $status) {
