@@ -55,6 +55,7 @@ $app->get('/statuses', function (Request $request) use ($app, $con) {
 * Status by ID
 */
 $app->get('/statuses/(\d+)', function (Request $request, $id) use ($app, $con) {
+	var_dump($id);
 	$statusFinder = new \Dal\StatusFinder($con);
 	$status = $statusFinder->findOneById($id);
 	var_dump($status);
@@ -76,7 +77,7 @@ $app->post('/statuses', function (Request $request) use ($app, $con) {
 	$user_id = $_SESSION['user']->getId();
 	$message = $request->getParameter('message');
 	
-	$status = new Model\Status(uniqid(), $message, $user_id, date("Y-m-d H:i:s", time()));
+	$status = new Model\Status(null, $message, $user_id, date("Y-m-d H:i:s", time()));
 	var_dump($status);
 	$statusMapper->persist($status);
 	
@@ -128,7 +129,7 @@ $app->post('/signin', function (Request $request) use ($app, $con) {
     	return $app->redirect('/');
     }
 
-    $user = new Model\User(uniqid(), $username, $passHash);
+    $user = new Model\User(null, $username, $passHash);
     $userMapper->persist($user);
 
     $_SESSION['is_authenticated'] = true;

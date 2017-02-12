@@ -19,8 +19,6 @@ class UserMapper
     public function persist(\Model\User $user)
     {
         $userFinder = new UserFinder($this->con);
-
-        $id = $user->getId();
         
         if(!$userFinder->findOneByUsername($user->getUsername())){
             $query = 'INSERT INTO users (id, username, password) VALUES (:id, :username, :password)';
@@ -28,7 +26,7 @@ class UserMapper
             $query = 'UPDATE FROM users (id, username, password) VALUES (:id, :username, :password) WHERE id = :id';
         }
         $parameters = array(
-            'id' => $id,
+            'id' => $user->getId(),
             'username' => $user->getUsername(),
             'password' => $user->getPassword(),
         );

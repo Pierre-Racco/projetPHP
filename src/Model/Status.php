@@ -28,7 +28,7 @@ class Status implements \JsonSerializable
      * @param string   $message
      * @param string   $name
      */
-    public function __construct($id, $message, $userId, $date)
+    public function __construct($id = null, $message, $userId, $date)
     {
         $this->id    = $id;
         $this->message   = $message;
