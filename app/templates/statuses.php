@@ -4,6 +4,7 @@
 		<?php include 'header.php'; ?>
 	</head>
 	<body>
+		<?php include 'menu.php'; ?>
 		<?php foreach($parameters as $status){ ?>
 			<div>
 				<p><?=$status->getUserId();?></p>

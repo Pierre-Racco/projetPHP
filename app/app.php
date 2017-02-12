@@ -156,10 +156,13 @@ $app->post('/login', function (Request $request) use ($app, $con) {
 	$username = $request->getParameter('user');
 	$pass = $request->getParameter('password');
 	$user = $userFinder->findOneByUsername($username);
+	var_dump($user);
+	var_dump(password_verify($pass, $user->getPassword()));
 
 	if ($user && password_verify($pass, $user->getPassword())) {
 		$_SESSION['is_authenticated'] = true;
-		return $app->redirect('/');
+		$_SESSION['user'] = $user;
+		return $app->redirect('/statuses');
 	}
 
 	return $app->render('login.php', ['user' => $user]);
@@ -170,7 +173,7 @@ $app->post('/login', function (Request $request) use ($app, $con) {
  */
 $app->get('/logout', function (Request $request) use ($app) {
 	session_destroy();
-	return $app->render('/');
+	return $app->redirect('/');
 });
 
 /*
