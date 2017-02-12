@@ -2,19 +2,17 @@
 
 trait EventDispatcherTrait
 {
-	private $events = [];
+    private $events = [];
 
-	public function addListener($name, $callable)
-	{
-		$this->events[$name][] = $callable;
-	}
+    public function addListener($name, $callable)
+    {
+        $this->events[$name][] = $callable;
+    }
 
-	public function dispatch($name, array $arguments = [])
-	{
-		foreach ($this->events[$name] as $callable) {
-			call_user_func_array($callable, $arguments);
-		}
-	}
+    public function dispatch($name, array $arguments = [])
+    {
+        foreach ($this->events[$name] as $callable) {
+            call_user_func_array($callable, $arguments);
+        }
+    }
 }
-
-?>

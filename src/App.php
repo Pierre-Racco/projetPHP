@@ -77,7 +77,7 @@ class App
     private function process(Route $route, Request $request, Response $response = null)
     {
         $this->dispatch('process.before', [$request]);
-     
+
         try {
 
             $arguments = $route->getArguments();

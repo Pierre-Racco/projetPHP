@@ -19,8 +19,8 @@ class UserMapper
     public function persist(\Model\User $user)
     {
         $userFinder = new UserFinder($this->con);
-        
-        if(!$userFinder->findOneByUsername($user->getUsername())){
+
+        if (!$userFinder->findOneByUsername($user->getUsername())) {
             $query = 'INSERT INTO users (id, username, password) VALUES (:id, :username, :password)';
         } else {
             $query = 'UPDATE FROM users (id, username, password) VALUES (:id, :username, :password) WHERE id = :id';
@@ -30,6 +30,7 @@ class UserMapper
             'username' => $user->getUsername(),
             'password' => $user->getPassword(),
         );
+
         return $this->con->executeQuery($query, $parameters);
     }
 
@@ -42,15 +43,16 @@ class UserMapper
     {
         //$id = $user->getId();
         // idem statusMapper
-        if($finder->findOneById($id)){
+        if ($finder->findOneById($id)) {
             $query = 'DELETE FROM users WHERE id = :id';
             $parameters = array(
                 'id' => $id,
             );
+
             return $this->con->executeQuery($query, $parameters);
         } else {
             return false;
         }
-        
+
     }
 }

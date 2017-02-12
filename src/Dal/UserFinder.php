@@ -12,7 +12,7 @@ class UserFinder implements FinderInterface
     }
 
     /**
-     * Renvoie un user grâce à son id 
+     * Renvoie un user grâce à son id
      * @param id identifiant du user
      * @param criteria
      * @return user
@@ -23,28 +23,28 @@ class UserFinder implements FinderInterface
         $stmt->bindParam(':id', $id,  \PDO::PARAM_INT);
         $stmt->execute();
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
-        if($user){
+        if ($user) {
             return new \Model\User($user['id'], $user['username'], $user['password']);
         } else {
             return false;
         }
-        
+
     }
 
     /**
-     * Renvoie un user grâce à son username 
+     * Renvoie un user grâce à son username
      * @param username nom du user
      * @param criteria
      * @return user
      */
     public function findOneByUsername($username)
     {
-        
+
         $stmt = $this->con->prepare('SELECT * FROM users WHERE username = :username');
         $stmt->execute(["username" => $username]);
-        
+
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
-        if($user){
+        if ($user) {
             return new \Model\User($user['id'], $user['username'], $user['password']);
         } else {
             return false;
@@ -64,7 +64,8 @@ class UserFinder implements FinderInterface
         foreach ($users as $user) {
             $returnArray[$user['id']] = new \Model\User($user['id'], $user['username'], $user['password']);
         }
+
         return $returnArray;
-        
+
     }
 }

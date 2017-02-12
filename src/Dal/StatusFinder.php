@@ -12,7 +12,7 @@ class StatusFinder implements FinderInterface
     }
 
     /**
-     * Renvoie un status grâce à son id 
+     * Renvoie un status grâce à son id
      * @param id identifiant du status
      * @param criteria
      * @return status
@@ -24,12 +24,12 @@ class StatusFinder implements FinderInterface
         $stmt->bindParam(':id', $id, \PDO::PARAM_STR);
         $stmt->execute();
         $status = $stmt->fetch(\PDO::FETCH_ASSOC);
-        if($status){
+        if ($status) {
             return new \Model\Status($status['id'], $status['message'], $status['username'], $status['date']);
         } else {
             return false;
         }
-        
+
     }
 
     /**
@@ -41,16 +41,16 @@ class StatusFinder implements FinderInterface
         $returnArray = [];
         $complete ="";
         foreach ($criterias as $parameter => $value) {
-            if($parameter == 'orderBy'){
+            if ($parameter == 'orderBy') {
                 $complete .= ' ORDER BY '.$value.' DESC AND ';
-            } else if($parameter == 'limit') {
+            } elseif ($parameter == 'limit') {
                 $complete .= 'LIMIT '.$value.' AND ';
-            } else if ($parameter == 'user'){
+            } elseif ($parameter == 'user') {
                 $complete .= ' WHERE user_id = '.$value.' AND ';
             } else {
                 $complete .= strtoupper($parameter).' '.$value.' AND ';
             }
-            
+
         }
         $query = 'SELECT s.id , s.message , u.username , s.date  FROM statuses AS s LEFT JOIN users u ON s.user_id = u.id';
             if (isset($criterias)) {
@@ -62,6 +62,7 @@ class StatusFinder implements FinderInterface
         foreach ($statuses as $status) {
             $returnArray[$status['id']] = new \Model\Status($status['id'], $status['message'], $status['username'], $status['date']);
         }
+
         return $returnArray;
     }
 }

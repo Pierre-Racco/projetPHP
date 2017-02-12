@@ -20,8 +20,8 @@ class User
     private $password;
 
     /**
-     * @param string   $login
-     * @param string   $password
+     * @param string $login
+     * @param string $password
      */
     public function __construct($id = null, $username, $password)
     {

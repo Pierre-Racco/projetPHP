@@ -27,9 +27,9 @@ class StatusMapper
         } else {
             $user_id = null;
         }
-        if($statusFinder->findOneById($id)){
+        if ($statusFinder->findOneById($id)) {
             $query = 'UPDATE FROM statuses (id, message, user_id, date) VALUES (:id, :message, :user_id, :date) WHERE id = :id';
-            
+
         } else {
             $query = 'INSERT INTO statuses (id, message, user_id, date) VALUES (:id, :message, :user_id, :date)';
         }
@@ -39,7 +39,8 @@ class StatusMapper
             'user_id' => $user_id,
             'date' => $status->getDate()
         );
-        return $this->con->executeQuery($query, $parameters); 
+
+        return $this->con->executeQuery($query, $parameters);
     }
 
     /**
@@ -51,11 +52,12 @@ class StatusMapper
     {
         $statusFinder = new StatusFinder($this->con);
 
-        if($statusFinder->findOneById($id)){
+        if ($statusFinder->findOneById($id)) {
             $query = 'DELETE FROM statuses WHERE id = :id';
             $parameters = array(
                 'id' => $id
             );
+
             return $this->con->executeQuery($query, $parameters);
         }
     }
