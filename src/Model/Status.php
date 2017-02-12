@@ -15,7 +15,7 @@ class Status implements \JsonSerializable
     private $message;
 
     /**
-     * @var string
+     * @var int
      */
     private $userId;
 
@@ -61,7 +61,7 @@ class Status implements \JsonSerializable
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getUserId()
     {
