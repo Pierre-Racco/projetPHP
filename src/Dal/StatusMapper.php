@@ -49,7 +49,7 @@ class StatusMapper
         $statusFinder = new StatusFinder($this->con);
         // à tester sans le if
         // execute return false s'il a pas trouvé d'élément à supprimer??
-        if($finder->findOneById($id)){
+        if($statusFinder->findOneById($id)){
             $query = 'DELETE FROM statuses WHERE id = :id';
             $parameters = array(
                 'id' => $id

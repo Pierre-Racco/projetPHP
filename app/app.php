@@ -54,13 +54,13 @@ $app->get('/statuses', function (Request $request) use ($app, $con) {
 /**
 * Status by ID
 */
-$app->get('/statuses/(\d+)', function (Request $request, $id) use ($app, $con) {
+$app->get('/statuses/(\d+)', function (Request $request, Response $response = null,  $id) use ($app, $con) {
 	var_dump($id);
 	$statusFinder = new \Dal\StatusFinder($con);
 	$status = $statusFinder->findOneById($id);
 	var_dump($status);
 	if ($status) {
-		return $app->render('status.php', $status);
+		return $app->render('status.php', ["status" => $status]);
 	} else {
 		throw new Exception\HttpException(404, "Status not found"); 
 	}
@@ -88,10 +88,13 @@ $app->post('/statuses', function (Request $request) use ($app, $con) {
 /*
 * Delete a status
 */
-$app->delete('/statuses/(\d+)', function (Request $request, $id) use ($app) {
-	$statusMapper = new \Dal\StatusMapper();
-	//$status = $statusMapper->findOneById($id);
-	if ($statusMapper->remove($id)){
+$app->delete('/statuses/(\d+)', function (Request $request, Response $response = null, $id) use ($app, $con) {
+	$statusMapper = new \Dal\StatusMapper($con);
+	$statusFinder = new \Dal\StatusFinder($con);
+	
+	$status = $statusFinder->findOneById($id);
+	if ($status){
+		$statusMapper->remove($id);
 		$app->redirect('/statuses', 204);
 	} else {
 		throw new Exception\HttpException(404, "Status not found");
