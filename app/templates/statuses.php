@@ -9,7 +9,7 @@
 				<p><?=$status->getUserId();?></p>
 				<p><?=$status->getMessage();?></p>
 				<p><?=$status->getDate();?></p>
-				<a href='/statuses/".$status->getId()."'></a>
+				<a href='/statuses/<?=$status->getId();?>'>Lien</a>
 			</div>
 		<?php } ?>
 		<form action="/statuses" method="POST" class="input-group">

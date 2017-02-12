@@ -57,7 +57,8 @@ $app->get('/statuses', function (Request $request) use ($app, $con) {
 $app->get('/statuses/(\d+)', function (Request $request, $id) use ($app, $con) {
 	$statusFinder = new \Dal\StatusFinder($con);
 	$status = $statusFinder->findOneById($id);
-	if ($status != null) {
+	var_dump($status);
+	if ($status) {
 		return $app->render('status.php', $status);
 	} else {
 		throw new Exception\HttpException(404, "Status not found"); 
