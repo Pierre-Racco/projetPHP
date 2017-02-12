@@ -36,7 +36,6 @@ $app->get('/statuses', function (Request $request) use ($app, $con) {
 	
 	if($request->guessBestFormat() == "text/html; charset=UTF-8"){
 		// Format html ?
-		var_dump($statusFinder->findAll());
 		return $app->render('statuses.php', $statusFinder->findAll());
 	} else if($request->guessBestFormat() == "application/json"){
 		// Format Json ?
@@ -55,10 +54,10 @@ $app->get('/statuses', function (Request $request) use ($app, $con) {
 * Status by ID
 */
 $app->get('/statuses/(\d+)', function (Request $request, Response $response = null,  $id) use ($app, $con) {
-	var_dump($id);
+
 	$statusFinder = new \Dal\StatusFinder($con);
 	$status = $statusFinder->findOneById($id);
-	var_dump($status);
+
 	if ($status) {
 		return $app->render('status.php', ["status" => $status]);
 	} else {
@@ -78,7 +77,6 @@ $app->post('/statuses', function (Request $request) use ($app, $con) {
 	$message = $request->getParameter('message');
 	
 	$status = new Model\Status(null, $message, $user_id, date("Y-m-d H:i:s", time()));
-	var_dump($status);
 	$statusMapper->persist($status);
 	
 	$app->redirect('/statuses', 204);
@@ -93,19 +91,15 @@ $app->delete('/statuses/(\d+)', function (Request $request, Response $response =
 	$statusFinder = new \Dal\StatusFinder($con);
 	
 	$status = $statusFinder->findOneById($id);
-	if ($status){
+	$user_id = $_SESSION['user']->getId();
+	if ($status && $user_id === $status->getUserId()){
 		$statusMapper->remove($id);
+		$app->redirect('/statuses', 204);
+	} else if ($status && $user_id !== $status->getUserId()){
 		$app->redirect('/statuses', 204);
 	} else {
 		throw new Exception\HttpException(404, "Status not found");
 	}
-	/*if ($status) {
-
-		$statusMapper->remove($status);
-		$app->redirect('/statuses', 204);
-	} else {
-		 
-	}*/
 });
 
 
@@ -127,9 +121,8 @@ $app->post('/signin', function (Request $request) use ($app, $con) {
     $username = $request->getParameter('username');
     $password = $request->getParameter('password');
     $passHash = password_hash($password, PASSWORD_BCRYPT);
-    if($userFinder->findOneByUsername($username)){ //gestion unique username erreur
-    	throw new Exception\HttpException(400, "Nom d'utilisateur déjà prit");
-    	return $app->redirect('/');
+    if($userFinder->findOneByUsername($username)){
+    	return $app->render('signin.php', ['error' => "Nom d'utilisateur déjà prit"]);
     }
 
     $user = new Model\User(null, $username, $passHash);
@@ -156,16 +149,13 @@ $app->post('/login', function (Request $request) use ($app, $con) {
 	$username = $request->getParameter('user');
 	$pass = $request->getParameter('password');
 	$user = $userFinder->findOneByUsername($username);
-	var_dump($user);
-	var_dump(password_verify($pass, $user->getPassword()));
-
 	if ($user && password_verify($pass, $user->getPassword())) {
 		$_SESSION['is_authenticated'] = true;
 		$_SESSION['user'] = $user;
 		return $app->redirect('/statuses');
 	}
 
-	return $app->render('login.php', ['user' => $user]);
+	return $app->render('login.php', ['error' => "Identifiants invalides"]);
 });
 
 /*
